@@ -92,7 +92,7 @@ any Inspector value, Play-mode edits revert on exit.
 | Interceptor Speed | How fast your interceptor traces the drawn path |
 | Interceptor Engage Height | Altitude the interceptor cruises at above your drawn path |
 | Dome Fire Cooldown | Per-dome cooldown between shots |
-| Intercept Hit Radius / Vertical Intercept Tolerance | Proximity-fuse size (horizontal / vertical) |
+| Intercept Hit Radius | Proximity-fuse radius on the map plane (altitude is ignored) |
 | Dome Range / Show Range Domes | Max path-drawing reach per battery, and its translucent dome marker |
 | Explosion Aoe Radius | Blast radius of a detonating interceptor (kills all enemy missiles inside) |
 | Max City Hits | Total city hits before game over |

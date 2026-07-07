@@ -21,10 +21,8 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] float interceptorEngageHeight = 10f;
     [Tooltip("Seconds a dome must wait between launches.")]
     [SerializeField] float domeFireCooldown = 1.25f;
-    [Tooltip("Horizontal distance at which an interceptor destroys an enemy missile.")]
+    [Tooltip("Horizontal distance at which an interceptor destroys an enemy missile (altitude is ignored).")]
     [SerializeField] float interceptHitRadius = 3.5f;
-    [Tooltip("Max height difference still counted as a hit (proximity fuse).")]
-    [SerializeField] float verticalInterceptTolerance = 6f;
     [Tooltip("Max horizontal distance a path can be drawn from its dome.")]
     [SerializeField] float domeRange = 28f;
     [Tooltip("Show a translucent dome over each battery marking its reach.")]
@@ -103,7 +101,6 @@ public class Bootstrap : MonoBehaviour
         GameConfig.InterceptorEngageHeight = interceptorEngageHeight;
         GameConfig.DomeFireCooldown = domeFireCooldown;
         GameConfig.InterceptHitRadius = interceptHitRadius;
-        GameConfig.VerticalInterceptTolerance = verticalInterceptTolerance;
         GameConfig.DomeRange = domeRange;
         GameConfig.ShowRangeDomes = showRangeDomes;
         GameConfig.ExplosionAoeRadius = explosionAoeRadius;

@@ -59,8 +59,13 @@ from any direction.
 ## Gameplay
 
 - Enemy missiles launch from a random compass direction, far outside the map, on a
-  slow ballistic arc toward a randomly chosen city. A red ring marks the targeted city
-  as soon as a missile is launched, so the threat is always visible ahead of time.
+  slow ballistic arc toward a randomly chosen city. A red ring marks the targeted city,
+  a red shadow disc tracks the ground directly beneath each missile, and a faded red
+  line shows the rest of its ground track — the whole threat picture lives on the map
+  plane.
+- Interception is decided purely on the map plane: if an interceptor crosses within
+  the hit radius of a missile's shadow, it's a kill regardless of altitude. Draw your
+  path across the red track ahead of the shadow and let the timing do the rest.
 - Draw a path on the ground from any Iron Dome battery; the interceptor flies that
   path at engage altitude at a constant speed — timing and shaping the curve to meet
   the missile is the core skill (same principle as *Flight Control*'s path drawing).

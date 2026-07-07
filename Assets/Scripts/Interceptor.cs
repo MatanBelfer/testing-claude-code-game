@@ -71,18 +71,21 @@ public class Interceptor : MonoBehaviour
         CheckIntercepts();
     }
 
-    // Proximity fuse: generous horizontal radius plus a separate vertical
-    // tolerance, so the player times the path crossing rather than having to
-    // match the enemy's exact altitude.
+    // Interception is altitude-agnostic: only horizontal (map-plane) distance
+    // matters, matching the ground shadow/track the player aims at. The
+    // interceptor effectively guards the column of air above its path.
+    static float HorizontalDistance(Vector3 a, Vector3 b)
+    {
+        float dx = a.x - b.x, dz = a.z - b.z;
+        return Mathf.Sqrt(dx * dx + dz * dz);
+    }
+
     void CheckIntercepts()
     {
         foreach (var missile in GameManager.Instance.ActiveMissiles)
         {
             if (missile == null || missile.IsResolved) continue;
-            Vector3 d = missile.transform.position - transform.position;
-            float horizontal = new Vector2(d.x, d.z).magnitude;
-            if (horizontal <= GameConfig.InterceptHitRadius &&
-                Mathf.Abs(d.y) <= GameConfig.VerticalInterceptTolerance)
+            if (HorizontalDistance(missile.transform.position, transform.position) <= GameConfig.InterceptHitRadius)
             {
                 Detonate(missile);
                 return;
@@ -90,10 +93,10 @@ public class Interceptor : MonoBehaviour
         }
     }
 
-    // The blast also takes out any other enemy missile inside the AOE sphere,
-    // so one interceptor can kill a tight cluster. The missile that tripped
-    // the fuse (if any) is always destroyed, even if the fuse's vertical
-    // tolerance put it just outside the blast sphere.
+    // The blast also takes out any other enemy missile whose ground position
+    // is inside the AOE, so one interceptor can kill a tight cluster. The
+    // missile that tripped the fuse (if any) is always destroyed, even if
+    // the AOE radius is tuned below the fuse radius.
     void Detonate(EnemyMissile fuseTarget = null)
     {
         if (fuseTarget != null)
@@ -102,7 +105,7 @@ public class Interceptor : MonoBehaviour
         foreach (var missile in GameManager.Instance.ActiveMissiles)
         {
             if (missile == null || missile.IsResolved) continue;
-            if (Vector3.Distance(transform.position, missile.transform.position) <= GameConfig.ExplosionAoeRadius)
+            if (HorizontalDistance(missile.transform.position, transform.position) <= GameConfig.ExplosionAoeRadius)
                 missile.InterceptedAt(missile.transform.position);
         }
 

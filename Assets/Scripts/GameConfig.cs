@@ -38,7 +38,6 @@ public static class GameConfig
     public static float InterceptorEngageHeight = 10f;
     public static float DomeFireCooldown = 1.25f;
     public static float InterceptHitRadius = 3.5f;
-    public static float VerticalInterceptTolerance = 6f;
     public static float DomeRange = 28f;
     public static bool ShowRangeDomes = true;
     public static float ExplosionAoeRadius = 6f;
