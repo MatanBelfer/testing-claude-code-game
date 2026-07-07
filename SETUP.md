@@ -29,17 +29,18 @@ ring marking its target city.
 
 These are the two things most likely to differ on a "latest everything" install:
 
-### Active Input Handling — must include the old Input Manager
-`Edit → Project Settings → Player → Other Settings → Active Input Handling`
-must be **"Input Manager (Old)"** or **"Both"** (project ships with Old).
+### Active Input Handling — Input System Package (New)
+The project uses the **new Input System** (`com.unity.inputsystem`, declared in
+`Packages/manifest.json`) and ships with
+`Player → Other Settings → Active Input Handling` set to
+**"Input System Package (New)"**. "Both" also works; "Input Manager (Old)" alone will
+break all input, since `InputRouter.cs` / `CameraRig.cs` read `Mouse.current`,
+`Keyboard.current`, and EnhancedTouch, and the UI uses `InputSystemUIInputModule`.
 
-All input code (`InputRouter.cs`, `CameraRig.cs`) and the UI's
-`StandaloneInputModule` use the legacy `UnityEngine.Input` API. If this is set to
-"Input System Package (New)" only, you'll get
-`InvalidOperationException: You are trying to read Input using the UnityEngine.Input
-class, but you have switched active Input handling...` at runtime. If you install the
-Input System package for something else, Unity offers to switch the backend —
-choose **Both**.
+No Input Actions asset is required — the code reads devices directly
+(`Mouse.current`, `Keyboard.current`, `Touch.activeTouches`) and the UI module
+assigns its default actions at runtime. If you later want rebindable controls,
+introduce an actions asset and route `InputRouter` through it.
 
 ### Render pipeline — Built-in works out of the box, URP is supported
 The project ships on the **Built-in Render Pipeline** and runs as-is.
@@ -87,7 +88,7 @@ Everything lives in `Assets/Scripts/GameConfig.cs`:
 | `DomeFireCooldown` | Per-dome cooldown between shots |
 | `InterceptHitRadius` | Proximity-fuse distance for a successful intercept |
 | `MaxCityHits` | Total city hits before game over |
-| `MinZoom` / `MaxZoom` / `ZoomSpeed` / `PinchZoomSpeed` | Camera zoom feel |
+| `MinZoom` / `MaxZoom` / `ScrollZoomStep` / `PinchZoomSpeed` | Camera zoom feel |
 | `KeyboardPanSpeed` | WASD/arrow pan speed |
 | `DomePickRadius` | How close a drag must start to a dome to begin drawing |
 
@@ -110,7 +111,8 @@ Everything lives in `Assets/Scripts/GameConfig.cs`:
 
 | Symptom | Cause / fix |
 |---|---|
-| `InvalidOperationException` mentioning `UnityEngine.Input` | Active Input Handling excludes the old Input Manager — set to "Both" (see §3) |
+| No input at all (mouse, keyboard, touch) | Active Input Handling is "Input Manager (Old)" — set to "Input System Package (New)" or "Both" (see §3) |
+| Compile errors in `UnityEngine.InputSystem` namespace | The Input System package failed to resolve — check `com.unity.inputsystem` in the Package Manager |
 | Everything magenta | Graphics settings point at a pipeline asset whose package isn't installed |
-| HUD buttons don't respond | The runtime-created `EventSystem` uses `StandaloneInputModule`, which needs legacy input enabled ("Both" is fine) |
+| HUD buttons don't respond | The runtime-created `EventSystem` needs `InputSystemUIInputModule` with actions — `HUDController` assigns defaults; check the Console for Input System warnings |
 | Console compile errors on first open | Paste them back to me — the project was never compiled before commit, so a stray C# error is possible and trivially fixable from the message |

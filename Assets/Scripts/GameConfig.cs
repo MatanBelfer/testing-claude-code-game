@@ -38,7 +38,7 @@ public static class GameConfig
     public const float MinZoom = 8f;
     public const float MaxZoom = 32f;
     public const float DefaultZoom = 20f;
-    public const float ZoomSpeed = 10f;
+    public const float ScrollZoomStep = 1.5f;
     public const float PinchZoomSpeed = 0.05f;
     public const float KeyboardPanSpeed = 22f;
 

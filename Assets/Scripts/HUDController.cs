@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
@@ -15,7 +16,8 @@ public class HUDController : MonoBehaviour
 
     void BuildUI()
     {
-        new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+        var eventSystemGo = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+        eventSystemGo.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
 
         var canvasGo = new GameObject("HUDCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         var canvas = canvasGo.GetComponent<Canvas>();

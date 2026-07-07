@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class InputRouter : MonoBehaviour
 {
@@ -22,13 +26,16 @@ public class InputRouter : MonoBehaviour
         cam = rig.Cam;
     }
 
+    void OnEnable() => EnhancedTouchSupport.Enable();
+    void OnDisable() => EnhancedTouchSupport.Disable();
+
     void Update()
     {
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
         HandleScrollZoom();
 
-        if (Input.touchSupported && Input.touchCount > 0)
+        if (Touch.activeTouches.Count > 0)
             HandleTouch();
         else
             HandleMouse();
@@ -36,9 +43,17 @@ public class InputRouter : MonoBehaviour
 
     void HandleScrollZoom()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (Mathf.Abs(scroll) > 0.0001f)
-            rig.Zoom(scroll * GameConfig.ZoomSpeed);
+        var mouse = Mouse.current;
+        if (mouse == null) return;
+
+        float scrollY = mouse.scroll.ReadValue().y;
+        if (Mathf.Abs(scrollY) < 0.001f) return;
+
+        // Wheel notches report ~±120 per step on some platforms and ~±1 on
+        // others; trackpads stream small continuous values. Normalize the
+        // large-step case so one notch is one zoom step everywhere.
+        if (Mathf.Abs(scrollY) > 5f) scrollY /= 120f;
+        rig.Zoom(scrollY * GameConfig.ScrollZoomStep);
     }
 
     bool RaycastPlane(Vector2 screenPos, float height, out Vector3 worldPoint)
@@ -129,25 +144,31 @@ public class InputRouter : MonoBehaviour
 
     void HandleMouse()
     {
-        if (Input.GetMouseButtonDown(0)) BeginDrag(Input.mousePosition);
-        else if (Input.GetMouseButton(0) && mode != Mode.Idle) UpdateDrag(Input.mousePosition);
-        else if (Input.GetMouseButtonUp(0)) EndDrag();
+        var mouse = Mouse.current;
+        if (mouse == null) return;
+
+        Vector2 pos = mouse.position.ReadValue();
+        if (mouse.leftButton.wasPressedThisFrame) BeginDrag(pos);
+        else if (mouse.leftButton.isPressed && mode != Mode.Idle) UpdateDrag(pos);
+        else if (mouse.leftButton.wasReleasedThisFrame) EndDrag();
     }
 
     void HandleTouch()
     {
-        if (Input.touchCount == 1)
+        var touches = Touch.activeTouches;
+
+        if (touches.Count == 1)
         {
             pinching = false;
-            Touch touch = Input.GetTouch(0);
+            Touch touch = touches[0];
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    BeginDrag(touch.position);
+                    BeginDrag(touch.screenPosition);
                     break;
                 case TouchPhase.Moved:
                 case TouchPhase.Stationary:
-                    if (mode != Mode.Idle) UpdateDrag(touch.position);
+                    if (mode != Mode.Idle) UpdateDrag(touch.screenPosition);
                     break;
                 case TouchPhase.Ended:
                 case TouchPhase.Canceled:
@@ -155,14 +176,12 @@ public class InputRouter : MonoBehaviour
                     break;
             }
         }
-        else if (Input.touchCount == 2)
+        else if (touches.Count >= 2)
         {
             if (mode == Mode.Drawing) activeDome.ClearPreview();
             mode = Mode.Idle;
 
-            Touch t0 = Input.GetTouch(0);
-            Touch t1 = Input.GetTouch(1);
-            float distance = Vector2.Distance(t0.position, t1.position);
+            float distance = Vector2.Distance(touches[0].screenPosition, touches[1].screenPosition);
             if (!pinching)
             {
                 pinching = true;

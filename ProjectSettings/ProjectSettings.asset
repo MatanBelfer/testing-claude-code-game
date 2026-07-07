@@ -83,7 +83,7 @@ PlayerSettings:
   n3dsEnableVSync: 0
   ignoreAlphaClear: 0
   timeFilteringWindowStrength: 0.5
-  activeInputHandler: 0
+  activeInputHandler: 1
   cloudProjectId:
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []

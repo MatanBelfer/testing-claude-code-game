@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraRig : MonoBehaviour
 {
@@ -18,8 +19,13 @@ public class CameraRig : MonoBehaviour
 
     void HandleKeyboardPan()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        var kb = Keyboard.current;
+        if (kb == null) return;
+
+        float h = (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1f : 0f)
+                - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1f : 0f);
+        float v = (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1f : 0f)
+                - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1f : 0f);
         if (Mathf.Abs(h) < 0.01f && Mathf.Abs(v) < 0.01f) return;
 
         Vector3 flatUp = Cam != null ? Cam.transform.up : transform.forward;
