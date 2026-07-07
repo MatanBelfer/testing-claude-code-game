@@ -38,9 +38,17 @@ public class Interceptor : MonoBehaviour
 
     void Update()
     {
-        if (path == null || segmentIndex >= path.Count - 1)
+        if (path == null)
         {
             Destroy(gameObject);
+            return;
+        }
+
+        // Reached the end of the drawn path: detonate there, so a well-timed
+        // path can destroy missiles by air-burst even without a direct pass.
+        if (segmentIndex >= path.Count - 1)
+        {
+            Detonate();
             return;
         }
 
@@ -76,10 +84,30 @@ public class Interceptor : MonoBehaviour
             if (horizontal <= GameConfig.InterceptHitRadius &&
                 Mathf.Abs(d.y) <= GameConfig.VerticalInterceptTolerance)
             {
-                missile.InterceptedAt(transform.position);
-                Destroy(gameObject);
+                Detonate(missile);
                 return;
             }
         }
+    }
+
+    // The blast also takes out any other enemy missile inside the AOE sphere,
+    // so one interceptor can kill a tight cluster. The missile that tripped
+    // the fuse (if any) is always destroyed, even if the fuse's vertical
+    // tolerance put it just outside the blast sphere.
+    void Detonate(EnemyMissile fuseTarget = null)
+    {
+        if (fuseTarget != null)
+            fuseTarget.InterceptedAt(transform.position);
+
+        foreach (var missile in GameManager.Instance.ActiveMissiles)
+        {
+            if (missile == null || missile.IsResolved) continue;
+            if (Vector3.Distance(transform.position, missile.transform.position) <= GameConfig.ExplosionAoeRadius)
+                missile.InterceptedAt(missile.transform.position);
+        }
+
+        ExplosionFX.Spawn(transform.position, new Color(1f, 0.9f, 0.55f),
+            GameConfig.ExplosionAoeRadius * 2f);
+        Destroy(gameObject);
     }
 }

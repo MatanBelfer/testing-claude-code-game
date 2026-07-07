@@ -29,19 +29,23 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] float domeRange = 28f;
     [Tooltip("Show a translucent dome over each battery marking its reach.")]
     [SerializeField] bool showRangeDomes = true;
+    [Tooltip("Blast radius when an interceptor detonates - enemy missiles inside it are destroyed.")]
+    [SerializeField] float explosionAoeRadius = 6f;
 
     [Header("Difficulty")]
     [Tooltip("Total city hits before game over.")]
     [SerializeField] int maxCityHits = 10;
 
     [Header("Camera")]
-    [SerializeField] float minZoom = 10f;
-    [SerializeField] float maxZoom = 50f;
-    [SerializeField] float defaultZoom = 26f;
-    [Tooltip("Zoom change per mouse-wheel notch.")]
-    [SerializeField] float scrollZoomStep = 2f;
-    [Tooltip("Zoom change per pixel of pinch distance change.")]
-    [SerializeField] float pinchZoomSpeed = 0.05f;
+    [Tooltip("Closest the camera can dolly in toward the map center.")]
+    [SerializeField] float minCameraDistance = 30f;
+    [Tooltip("Farthest the camera can dolly out from the map center.")]
+    [SerializeField] float maxCameraDistance = 160f;
+    [SerializeField] float defaultCameraDistance = 90f;
+    [Tooltip("Dolly distance per mouse-wheel notch.")]
+    [SerializeField] float scrollDollyStep = 8f;
+    [Tooltip("Dolly distance per pixel of pinch distance change.")]
+    [SerializeField] float pinchDollySpeed = 0.2f;
     [Tooltip("Orbit speed in degrees/second for Q/E, A/D and left/right arrows.")]
     [SerializeField] float keyboardRotateSpeed = 90f;
     [Tooltip("Orbit degrees per screen pixel when dragging on empty ground.")]
@@ -50,10 +54,10 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] float keyboardTiltSpeed = 60f;
     [Tooltip("Tilt degrees per screen pixel (right-mouse drag / two-finger drag).")]
     [SerializeField] float dragTiltSpeed = 0.2f;
-    [Tooltip("Camera pitch at startup. 35.264 is the classic isometric angle.")]
-    [SerializeField] float defaultPitch = 35.264f;
-    [Tooltip("Shallowest camera pitch (low, near-horizon view).")]
-    [SerializeField] float minPitch = 20f;
+    [Tooltip("Camera pitch at startup.")]
+    [SerializeField] float defaultPitch = 40f;
+    [Tooltip("Shallowest camera pitch (low, toward-the-horizon view).")]
+    [SerializeField] float minPitch = 10f;
     [Tooltip("Steepest camera pitch (near top-down view).")]
     [SerializeField] float maxPitch = 85f;
 
@@ -102,14 +106,15 @@ public class Bootstrap : MonoBehaviour
         GameConfig.VerticalInterceptTolerance = verticalInterceptTolerance;
         GameConfig.DomeRange = domeRange;
         GameConfig.ShowRangeDomes = showRangeDomes;
+        GameConfig.ExplosionAoeRadius = explosionAoeRadius;
 
         GameConfig.MaxCityHits = maxCityHits;
 
-        GameConfig.MinZoom = minZoom;
-        GameConfig.MaxZoom = maxZoom;
-        GameConfig.DefaultZoom = defaultZoom;
-        GameConfig.ScrollZoomStep = scrollZoomStep;
-        GameConfig.PinchZoomSpeed = pinchZoomSpeed;
+        GameConfig.MinCameraDistance = minCameraDistance;
+        GameConfig.MaxCameraDistance = maxCameraDistance;
+        GameConfig.DefaultCameraDistance = defaultCameraDistance;
+        GameConfig.ScrollDollyStep = scrollDollyStep;
+        GameConfig.PinchDollySpeed = pinchDollySpeed;
         GameConfig.KeyboardRotateSpeed = keyboardRotateSpeed;
         GameConfig.DragRotateSpeed = dragRotateSpeed;
         GameConfig.KeyboardTiltSpeed = keyboardTiltSpeed;
@@ -148,9 +153,10 @@ public class Bootstrap : MonoBehaviour
         rigGo.transform.position = Vector3.zero;
 
         mainCam.transform.SetParent(rigGo.transform, false);
-        mainCam.orthographic = true;
+        mainCam.orthographic = false;
+        mainCam.fieldOfView = 50f;
         mainCam.nearClipPlane = 1f;
-        mainCam.farClipPlane = 300f;
+        mainCam.farClipPlane = 500f;
 
         rigGo.AddComponent<CameraRig>();
         rigGo.AddComponent<InputRouter>();

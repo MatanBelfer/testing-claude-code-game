@@ -41,22 +41,23 @@ public static class GameConfig
     public static float VerticalInterceptTolerance = 6f;
     public static float DomeRange = 28f;
     public static bool ShowRangeDomes = true;
+    public static float ExplosionAoeRadius = 6f;
 
     // --- Difficulty (overwritten by Bootstrap Inspector values) ---
     public static int MaxCityHits = 10;
 
     // --- Camera (overwritten by Bootstrap Inspector values) ---
-    public static float MinZoom = 10f;
-    public static float MaxZoom = 50f;
-    public static float DefaultZoom = 26f;
-    public static float ScrollZoomStep = 2f;
-    public static float PinchZoomSpeed = 0.05f;
+    public static float MinCameraDistance = 30f;
+    public static float MaxCameraDistance = 160f;
+    public static float DefaultCameraDistance = 90f;
+    public static float ScrollDollyStep = 8f;        // dolly units per mouse-wheel notch
+    public static float PinchDollySpeed = 0.2f;      // dolly units per pinch pixel
     public static float KeyboardRotateSpeed = 90f;   // degrees per second (Q/E, A/D, left/right)
     public static float DragRotateSpeed = 0.25f;     // degrees per screen pixel dragged
     public static float KeyboardTiltSpeed = 60f;     // degrees per second (W/S, up/down)
     public static float DragTiltSpeed = 0.2f;        // degrees per screen pixel dragged
-    public static float DefaultPitch = 35.264f;      // classic isometric angle
-    public static float MinPitch = 20f;              // shallow, near-horizon view
+    public static float DefaultPitch = 40f;
+    public static float MinPitch = 10f;              // shallow, toward-the-horizon view
     public static float MaxPitch = 85f;              // near top-down view
 
     // --- Input feel ---

@@ -55,7 +55,7 @@ public class InputRouter : MonoBehaviour
         // others; trackpads stream small continuous values. Normalize the
         // large-step case so one notch is one zoom step everywhere.
         if (Mathf.Abs(scrollY) > 5f) scrollY /= 120f;
-        rig.Zoom(scrollY * GameConfig.ScrollZoomStep);
+        rig.Zoom(scrollY * GameConfig.ScrollDollyStep);
     }
 
     // Paths are drawn on the ground plane (y = 0) so the line lands exactly
@@ -215,7 +215,7 @@ public class InputRouter : MonoBehaviour
             }
             else
             {
-                rig.Zoom((distance - lastPinchDistance) * GameConfig.PinchZoomSpeed);
+                rig.Zoom((distance - lastPinchDistance) * GameConfig.PinchDollySpeed);
                 rig.Tilt((center.y - lastPinchCenter.y) * GameConfig.DragTiltSpeed);
                 lastPinchDistance = distance;
                 lastPinchCenter = center;

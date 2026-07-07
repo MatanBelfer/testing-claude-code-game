@@ -94,8 +94,9 @@ any Inspector value, Play-mode edits revert on exit.
 | Dome Fire Cooldown | Per-dome cooldown between shots |
 | Intercept Hit Radius / Vertical Intercept Tolerance | Proximity-fuse size (horizontal / vertical) |
 | Dome Range / Show Range Domes | Max path-drawing reach per battery, and its translucent dome marker |
+| Explosion Aoe Radius | Blast radius of a detonating interceptor (kills all enemy missiles inside) |
 | Max City Hits | Total city hits before game over |
-| Min/Max/Default Zoom, Scroll Zoom Step, Pinch Zoom Speed | Camera zoom feel |
+| Min/Max/Default Camera Distance, Scroll Dolly Step, Pinch Dolly Speed | Dolly-zoom range and feel |
 | Keyboard/Drag Rotate Speed | Orbit speed for keys and for dragging on empty ground |
 | Keyboard/Drag Tilt Speed, Default/Min/Max Pitch | Camera tilt feel and limits |
 

@@ -5,10 +5,12 @@ public class ExplosionFX : MonoBehaviour
     const float Life = 0.35f;
 
     float elapsed;
-    Vector3 startScale;
+    float finalDiameter;
     Renderer rend;
 
-    public static void Spawn(Vector3 pos, Color color)
+    // finalDiameter is the fireball's size at the end of its growth; pass the
+    // blast diameter so the visual matches the gameplay radius.
+    public static void Spawn(Vector3 pos, Color color, float finalDiameter = 1.8f)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Destroy(go.GetComponent<Collider>());
@@ -19,14 +21,14 @@ public class ExplosionFX : MonoBehaviour
 
         var fx = go.AddComponent<ExplosionFX>();
         fx.rend = go.GetComponent<Renderer>();
-        fx.startScale = go.transform.localScale;
+        fx.finalDiameter = finalDiameter;
     }
 
     void Update()
     {
         elapsed += Time.deltaTime;
         float t = elapsed / Life;
-        transform.localScale = startScale * Mathf.Lerp(1f, 6f, t);
+        transform.localScale = Vector3.one * Mathf.Lerp(0.3f, finalDiameter, t);
 
         if (rend != null)
         {

@@ -38,8 +38,9 @@ upgrade, open `Assets/Scenes/Main.unity`, press Play.
 
 ## Controls
 
-The map is fixed in place; the camera orbits around it so you can watch missiles
-come in from any direction.
+The map is fixed in place; a perspective camera orbits around it — rotate, tilt
+(from a low horizon view up to top-down) and dolly-zoom to watch missiles come in
+from any direction.
 
 **PC (mouse + keyboard)**
 - Click-drag starting *on* an Iron Dome battery: draws the interceptor's flight path
@@ -65,6 +66,9 @@ come in from any direction.
   the missile is the core skill (same principle as *Flight Control*'s path drawing).
 - Each battery has a limited reach, shown as a translucent dome; paths can't be drawn
   past its edge, so coverage gaps between batteries are part of the strategy.
+- An interceptor detonates when it triggers its proximity fuse *or* reaches the end of
+  its drawn path, and the blast destroys every enemy missile inside its AOE — a
+  well-placed air-burst can take out a cluster with one shot.
 - All gameplay tuning (spawn rate, missile speed, intercept radius, camera) is exposed
   in the Inspector on the **Bootstrap** object in the Main scene.
 - Each dome can fire again after a short cooldown (no ammo limit).

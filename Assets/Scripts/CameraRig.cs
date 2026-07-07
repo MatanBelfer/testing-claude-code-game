@@ -2,23 +2,22 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // Orbit rig: the map is fixed in place; this rig sits at the map center and
-// yaws around it, while the camera hangs off it at an adjustable pitch.
-// Zoom is orthographic size. There is no panning.
+// yaws around it, while a perspective camera hangs off it at an adjustable
+// pitch and distance (dolly zoom). Low pitch = looking across the map toward
+// the horizon; high pitch = top-down. There is no panning.
 public class CameraRig : MonoBehaviour
 {
     public Camera Cam { get; private set; }
 
-    const float CameraDistance = 80f;
-
     float yaw = 45f;
     float pitch;
+    float distance;
 
     void Awake()
     {
         Cam = GetComponentInChildren<Camera>();
         pitch = GameConfig.DefaultPitch;
-        if (Cam != null)
-            Cam.orthographicSize = GameConfig.DefaultZoom;
+        distance = GameConfig.DefaultCameraDistance;
         Apply();
     }
 
@@ -55,6 +54,13 @@ public class CameraRig : MonoBehaviour
         Apply();
     }
 
+    public void Zoom(float delta)
+    {
+        distance = Mathf.Clamp(distance - delta,
+            GameConfig.MinCameraDistance, GameConfig.MaxCameraDistance);
+        Apply();
+    }
+
     void Apply()
     {
         transform.rotation = Quaternion.Euler(0f, yaw, 0f);
@@ -62,12 +68,6 @@ public class CameraRig : MonoBehaviour
 
         Quaternion camRot = Quaternion.Euler(pitch, 0f, 0f);
         Cam.transform.localRotation = camRot;
-        Cam.transform.localPosition = -(camRot * Vector3.forward) * CameraDistance;
-    }
-
-    public void Zoom(float delta)
-    {
-        if (Cam == null) return;
-        Cam.orthographicSize = Mathf.Clamp(Cam.orthographicSize - delta, GameConfig.MinZoom, GameConfig.MaxZoom);
+        Cam.transform.localPosition = -(camRot * Vector3.forward) * distance;
     }
 }
