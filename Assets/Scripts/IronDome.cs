@@ -44,10 +44,13 @@ public class IronDome : MonoBehaviour
             CooldownRemaining -= Time.deltaTime;
     }
 
+    // Points arrive on the ground plane; draw the line just above it so it
+    // doesn't z-fight with the terrain.
     public void ShowPreview(List<Vector3> points)
     {
         previewLine.positionCount = points.Count;
-        previewLine.SetPositions(points.ToArray());
+        for (int i = 0; i < points.Count; i++)
+            previewLine.SetPosition(i, points[i] + Vector3.up * GameConfig.PathPreviewHeight);
     }
 
     public void ClearPreview()

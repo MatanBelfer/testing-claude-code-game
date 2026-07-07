@@ -38,26 +38,31 @@ upgrade, open `Assets/Scenes/Main.unity`, press Play.
 
 ## Controls
 
+The map is fixed in place; the camera orbits around it so you can watch missiles
+come in from any direction.
+
 **PC (mouse + keyboard)**
-- Click-drag starting *on* an Iron Dome battery: draws the interceptor's flight path.
-  Release to fire.
-- Click-drag starting on empty ground: pans the camera.
+- Click-drag starting *on* an Iron Dome battery: draws the interceptor's flight path
+  on the ground. Release to fire.
+- Click-drag starting on empty ground: rotates the camera around the map.
 - Mouse scroll wheel: zoom in/out.
-- WASD / arrow keys: pan the camera.
+- Q/E, A/D or left/right arrows: rotate the camera.
 
 **Mobile (touch)**
 - One-finger drag starting on a dome: draws the interceptor's flight path.
-- One-finger drag on empty ground: pans the camera.
+- One-finger drag on empty ground: rotates the camera around the map.
 - Two-finger pinch: zoom in/out.
 
 ## Gameplay
 
-- Enemy missiles spawn from the edge of the map on a fixed ballistic arc toward a
-  randomly chosen city. A red ring marks the targeted city as soon as a missile is
-  launched, so the threat is always visible ahead of time.
-- Draw a path from any Iron Dome battery to intercept a missile. The interceptor flies
-  exactly the path you draw at a constant speed — timing and shaping the curve to meet
+- Enemy missiles launch from a random compass direction, far outside the map, on a
+  slow ballistic arc toward a randomly chosen city. A red ring marks the targeted city
+  as soon as a missile is launched, so the threat is always visible ahead of time.
+- Draw a path on the ground from any Iron Dome battery; the interceptor flies that
+  path at engage altitude at a constant speed — timing and shaping the curve to meet
   the missile is the core skill (same principle as *Flight Control*'s path drawing).
+- All gameplay tuning (spawn rate, missile speed, intercept radius, camera) is exposed
+  in the Inspector on the **Bootstrap** object in the Main scene.
 - Each dome can fire again after a short cooldown (no ammo limit).
 - The game ends when cities have been hit a total of `GameConfig.MaxCityHits` times
   (10 by default). Score increases with each successful intercept.

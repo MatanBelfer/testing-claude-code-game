@@ -7,7 +7,7 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class InputRouter : MonoBehaviour
 {
-    enum Mode { Idle, Panning, Drawing }
+    enum Mode { Idle, Rotating, Drawing }
 
     CameraRig rig;
     Camera cam;
@@ -56,10 +56,13 @@ public class InputRouter : MonoBehaviour
         rig.Zoom(scrollY * GameConfig.ScrollZoomStep);
     }
 
-    bool RaycastPlane(Vector2 screenPos, float height, out Vector3 worldPoint)
+    // Paths are drawn on the ground plane (y = 0) so the line lands exactly
+    // under the cursor/finger; the interceptor lifts the path to engage
+    // height when it flies it.
+    bool RaycastGround(Vector2 screenPos, out Vector3 worldPoint)
     {
         Ray ray = cam.ScreenPointToRay(screenPos);
-        Plane plane = new Plane(Vector3.up, new Vector3(0, height, 0));
+        Plane plane = new Plane(Vector3.up, Vector3.zero);
         if (plane.Raycast(ray, out float dist))
         {
             worldPoint = ray.GetPoint(dist);
@@ -87,21 +90,21 @@ public class InputRouter : MonoBehaviour
 
     void BeginDrag(Vector2 screenPos)
     {
-        if (RaycastPlane(screenPos, 0f, out Vector3 groundPoint))
+        if (RaycastGround(screenPos, out Vector3 groundPoint))
         {
             var dome = FindNearbyDome(groundPoint);
             if (dome != null && dome.IsReady)
             {
                 mode = Mode.Drawing;
                 activeDome = dome;
-                currentPath = new List<Vector3> { dome.transform.position + Vector3.up * GameConfig.InterceptorEngageHeight };
+                currentPath = new List<Vector3> { dome.transform.position };
                 activeDome.ShowPreview(currentPath);
                 lastScreenPos = screenPos;
                 return;
             }
         }
 
-        mode = Mode.Panning;
+        mode = Mode.Rotating;
         lastScreenPos = screenPos;
     }
 
@@ -109,8 +112,9 @@ public class InputRouter : MonoBehaviour
     {
         if (mode == Mode.Drawing)
         {
-            if (RaycastPlane(screenPos, GameConfig.InterceptorEngageHeight, out Vector3 point))
+            if (RaycastGround(screenPos, out Vector3 point))
             {
+                point.y = 0f;
                 if (Vector3.Distance(point, currentPath[currentPath.Count - 1]) >= GameConfig.MinPathPointDistance)
                 {
                     currentPath.Add(point);
@@ -118,14 +122,10 @@ public class InputRouter : MonoBehaviour
                 }
             }
         }
-        else if (mode == Mode.Panning)
+        else if (mode == Mode.Rotating)
         {
-            Vector2 screenDelta = screenPos - lastScreenPos;
-            float sizeFactor = rig.Cam.orthographicSize / Screen.height;
-            Vector3 right = cam.transform.right; right.y = 0; right.Normalize();
-            Vector3 up = cam.transform.up; up.y = 0; up.Normalize();
-            Vector3 worldDelta = (-right * screenDelta.x - up * screenDelta.y) * sizeFactor * 2f;
-            rig.Pan(worldDelta);
+            float deltaX = screenPos.x - lastScreenPos.x;
+            rig.Rotate(-deltaX * GameConfig.DragRotateSpeed);
         }
         lastScreenPos = screenPos;
     }

@@ -47,9 +47,14 @@ public class GameManager : MonoBehaviour
     {
         if (Cities.Count == 0) return;
 
+        // Launch from a random compass direction at a fixed distance from the
+        // target city, so threats come from all around the map and every
+        // missile has the same flight time regardless of target.
         City target = Cities[Random.Range(0, Cities.Count)];
-        float edgeX = Random.Range(-GameConfig.MapHalfWidth * 0.8f, GameConfig.MapHalfWidth * 0.8f);
-        Vector3 start = new Vector3(edgeX, GameConfig.SpawnHeight, GameConfig.SpawnEdgeZ);
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        Vector3 dir = new Vector3(Mathf.Sin(angle), 0f, Mathf.Cos(angle));
+        Vector3 start = target.transform.position + dir * GameConfig.SpawnDistance;
+        start.y = GameConfig.SpawnHeight;
 
         var go = new GameObject("EnemyMissile");
         var missile = go.AddComponent<EnemyMissile>();

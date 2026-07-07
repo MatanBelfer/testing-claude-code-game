@@ -1,5 +1,9 @@
 using UnityEngine;
 
+// Map layout and input feel constants live here.
+// The gameplay/camera values below are DEFAULTS ONLY: Bootstrap exposes them as
+// Inspector fields on the Bootstrap object in the Main scene and overwrites
+// these statics on startup (see Bootstrap.ApplyTuning). Tune in the Inspector.
 public static class GameConfig
 {
     public static readonly Vector3[] CityPositions =
@@ -21,27 +25,35 @@ public static class GameConfig
     public const float MapHalfWidth = 45f;
     public const float MapHalfDepth = 45f;
 
-    public const float MinSpawnInterval = 2.5f;
-    public const float MaxSpawnInterval = 4.5f;
-    public const float SpawnEdgeZ = 42f;
-    public const float SpawnHeight = 1f;
-    public const float MissileFlightDuration = 9f;
-    public const float MissileArcHeight = 14f;
+    // --- Enemy missiles (overwritten by Bootstrap Inspector values) ---
+    public static float MinSpawnInterval = 6f;
+    public static float MaxSpawnInterval = 10f;
+    public static float SpawnDistance = 75f;
+    public static float SpawnHeight = 1f;
+    public static float MissileFlightDuration = 20f;
+    public static float MissileArcHeight = 18f;
 
-    public const float InterceptorSpeed = 26f;
-    public const float InterceptorEngageHeight = 12f;
-    public const float DomeFireCooldown = 1.25f;
-    public const float InterceptHitRadius = 3f;
+    // --- Interceptors (overwritten by Bootstrap Inspector values) ---
+    public static float InterceptorSpeed = 26f;
+    public static float InterceptorEngageHeight = 10f;
+    public static float DomeFireCooldown = 1.25f;
+    public static float InterceptHitRadius = 3.5f;
+    public static float VerticalInterceptTolerance = 6f;
 
-    public const int MaxCityHits = 10;
+    // --- Difficulty (overwritten by Bootstrap Inspector values) ---
+    public static int MaxCityHits = 10;
 
-    public const float MinZoom = 8f;
-    public const float MaxZoom = 32f;
-    public const float DefaultZoom = 20f;
-    public const float ScrollZoomStep = 1.5f;
-    public const float PinchZoomSpeed = 0.05f;
-    public const float KeyboardPanSpeed = 22f;
+    // --- Camera (overwritten by Bootstrap Inspector values) ---
+    public static float MinZoom = 10f;
+    public static float MaxZoom = 50f;
+    public static float DefaultZoom = 26f;
+    public static float ScrollZoomStep = 2f;
+    public static float PinchZoomSpeed = 0.05f;
+    public static float KeyboardRotateSpeed = 90f;   // degrees per second (Q/E, arrows)
+    public static float DragRotateSpeed = 0.25f;     // degrees per screen pixel dragged
 
+    // --- Input feel ---
     public const float DomePickRadius = 4f;
     public const float MinPathPointDistance = 0.6f;
+    public const float PathPreviewHeight = 0.3f;
 }

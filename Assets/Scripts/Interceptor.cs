@@ -6,9 +6,15 @@ public class Interceptor : MonoBehaviour
     List<Vector3> path;
     int segmentIndex;
 
-    public void Init(List<Vector3> waypoints)
+    // Waypoints arrive on the ground plane (as drawn). The interceptor
+    // launches from the dome and flies the same path lifted to engage height.
+    public void Init(List<Vector3> groundWaypoints)
     {
-        path = waypoints;
+        path = new List<Vector3>(groundWaypoints.Count);
+        path.Add(groundWaypoints[0] + Vector3.up * 1.5f);
+        for (int i = 1; i < groundWaypoints.Count; i++)
+            path.Add(groundWaypoints[i] + Vector3.up * GameConfig.InterceptorEngageHeight);
+
         transform.position = path[0];
         BuildVisual();
     }
@@ -57,12 +63,18 @@ public class Interceptor : MonoBehaviour
         CheckIntercepts();
     }
 
+    // Proximity fuse: generous horizontal radius plus a separate vertical
+    // tolerance, so the player times the path crossing rather than having to
+    // match the enemy's exact altitude.
     void CheckIntercepts()
     {
         foreach (var missile in GameManager.Instance.ActiveMissiles)
         {
             if (missile == null || missile.IsResolved) continue;
-            if (Vector3.Distance(transform.position, missile.transform.position) <= GameConfig.InterceptHitRadius)
+            Vector3 d = missile.transform.position - transform.position;
+            float horizontal = new Vector2(d.x, d.z).magnitude;
+            if (horizontal <= GameConfig.InterceptHitRadius &&
+                Mathf.Abs(d.y) <= GameConfig.VerticalInterceptTolerance)
             {
                 missile.InterceptedAt(transform.position);
                 Destroy(gameObject);

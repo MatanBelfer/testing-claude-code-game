@@ -76,21 +76,30 @@ Switch platform to WebGL and build; host the output folder on any static server.
 
 ## 5. Tuning the game
 
-Everything lives in `Assets/Scripts/GameConfig.cs`:
+Select the **Bootstrap** object in `Assets/Scenes/Main.unity` — all gameplay and
+camera tuning is exposed there as Inspector fields with tooltips, grouped under
+*Enemy Missiles*, *Interceptors*, *Difficulty*, and *Camera*. Values you set in the
+Inspector are copied into the static `GameConfig` on startup and override the code
+defaults (`Bootstrap.ApplyTuning`). You can tweak them live in Play mode, but as with
+any Inspector value, Play-mode edits revert on exit.
 
-| Constant | Meaning |
+| Field | Meaning |
 |---|---|
-| `CityPositions` / `DomePositions` | Map layout |
-| `MinSpawnInterval` / `MaxSpawnInterval` | Enemy spawn cadence (flat difficulty) |
-| `MissileFlightDuration` / `MissileArcHeight` | Ballistic arc shape/speed |
-| `InterceptorSpeed` | How fast your interceptor traces the drawn path |
-| `InterceptorEngageHeight` | Altitude the drawn path lives at (intercept plane) |
-| `DomeFireCooldown` | Per-dome cooldown between shots |
-| `InterceptHitRadius` | Proximity-fuse distance for a successful intercept |
-| `MaxCityHits` | Total city hits before game over |
-| `MinZoom` / `MaxZoom` / `ScrollZoomStep` / `PinchZoomSpeed` | Camera zoom feel |
-| `KeyboardPanSpeed` | WASD/arrow pan speed |
-| `DomePickRadius` | How close a drag must start to a dome to begin drawing |
+| Min/Max Spawn Interval | Seconds between enemy launches (flat difficulty) |
+| Spawn Distance | How far from its target a missile spawns — more distance = more warning |
+| Missile Flight Duration | Seconds from spawn to impact (higher = slower missiles) |
+| Missile Arc Height | Peak altitude of the ballistic arc |
+| Interceptor Speed | How fast your interceptor traces the drawn path |
+| Interceptor Engage Height | Altitude the interceptor cruises at above your drawn path |
+| Dome Fire Cooldown | Per-dome cooldown between shots |
+| Intercept Hit Radius / Vertical Intercept Tolerance | Proximity-fuse size (horizontal / vertical) |
+| Max City Hits | Total city hits before game over |
+| Min/Max/Default Zoom, Scroll Zoom Step, Pinch Zoom Speed | Camera zoom feel |
+| Keyboard/Drag Rotate Speed | Orbit speed for keys and for dragging on empty ground |
+
+Map layout (`CityPositions` / `DomePositions`, ground size) still lives in
+`Assets/Scripts/GameConfig.cs`. Input-feel constants (`DomePickRadius`,
+`MinPathPointDistance`) are there too.
 
 ## 6. Architecture notes (for making changes in the editor)
 

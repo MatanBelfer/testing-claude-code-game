@@ -1,48 +1,47 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Orbit rig: the map is fixed in place; this rig sits at the map center and
+// yaws around it. Zoom is orthographic size. There is no panning.
 public class CameraRig : MonoBehaviour
 {
     public Camera Cam { get; private set; }
+
+    float yaw = 45f;
 
     void Awake()
     {
         Cam = GetComponentInChildren<Camera>();
         if (Cam != null)
             Cam.orthographicSize = GameConfig.DefaultZoom;
+        ApplyYaw();
     }
 
     void Update()
     {
-        HandleKeyboardPan();
+        HandleKeyboardOrbit();
     }
 
-    void HandleKeyboardPan()
+    void HandleKeyboardOrbit()
     {
         var kb = Keyboard.current;
         if (kb == null) return;
 
-        float h = (kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1f : 0f)
-                - (kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1f : 0f);
-        float v = (kb.wKey.isPressed || kb.upArrowKey.isPressed ? 1f : 0f)
-                - (kb.sKey.isPressed || kb.downArrowKey.isPressed ? 1f : 0f);
-        if (Mathf.Abs(h) < 0.01f && Mathf.Abs(v) < 0.01f) return;
-
-        Vector3 flatUp = Cam != null ? Cam.transform.up : transform.forward;
-        flatUp.y = 0; flatUp.Normalize();
-        Vector3 flatRight = Cam != null ? Cam.transform.right : transform.right;
-        flatRight.y = 0; flatRight.Normalize();
-
-        Vector3 move = (flatRight * h + flatUp * v) * GameConfig.KeyboardPanSpeed * Time.deltaTime;
-        Pan(move);
+        float dir = (kb.eKey.isPressed || kb.dKey.isPressed || kb.rightArrowKey.isPressed ? 1f : 0f)
+                  - (kb.qKey.isPressed || kb.aKey.isPressed || kb.leftArrowKey.isPressed ? 1f : 0f);
+        if (dir != 0f)
+            Rotate(dir * GameConfig.KeyboardRotateSpeed * Time.deltaTime);
     }
 
-    public void Pan(Vector3 worldDelta)
+    public void Rotate(float degrees)
     {
-        Vector3 newPos = transform.position + worldDelta;
-        newPos.x = Mathf.Clamp(newPos.x, -GameConfig.MapHalfWidth, GameConfig.MapHalfWidth);
-        newPos.z = Mathf.Clamp(newPos.z, -GameConfig.MapHalfDepth, GameConfig.MapHalfDepth);
-        transform.position = newPos;
+        yaw += degrees;
+        ApplyYaw();
+    }
+
+    void ApplyYaw()
+    {
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
     }
 
     public void Zoom(float delta)
