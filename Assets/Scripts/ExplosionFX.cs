@@ -15,9 +15,7 @@ public class ExplosionFX : MonoBehaviour
         go.transform.position = pos;
         go.transform.localScale = Vector3.one * 0.3f;
 
-        var mat = new Material(Shader.Find("Standard"));
-        mat.color = color;
-        go.GetComponent<MeshRenderer>().material = mat;
+        go.GetComponent<MeshRenderer>().material = VisualUtil.NewUnlitTransparentMaterial(color);
 
         var fx = go.AddComponent<ExplosionFX>();
         fx.rend = go.GetComponent<Renderer>();

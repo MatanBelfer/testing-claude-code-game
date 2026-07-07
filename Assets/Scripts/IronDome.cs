@@ -13,7 +13,7 @@ public class IronDome : MonoBehaviour
         BuildVisual();
 
         previewLine = gameObject.AddComponent<LineRenderer>();
-        previewLine.material = new Material(Shader.Find("Sprites/Default"));
+        previewLine.material = VisualUtil.NewUnlitTransparentMaterial(Color.white);
         previewLine.startColor = previewLine.endColor = new Color(0.2f, 1f, 0.4f, 0.9f);
         previewLine.startWidth = previewLine.endWidth = 0.25f;
         previewLine.positionCount = 0;
@@ -27,9 +27,7 @@ public class IronDome : MonoBehaviour
         baseObj.transform.localScale = new Vector3(2f, 0.4f, 2f);
         baseObj.transform.localPosition = new Vector3(0, 0.4f, 0);
         Destroy(baseObj.GetComponent<Collider>());
-        var baseMat = new Material(Shader.Find("Standard"));
-        baseMat.color = new Color(0.25f, 0.3f, 0.25f);
-        baseObj.GetComponent<MeshRenderer>().material = baseMat;
+        baseObj.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(new Color(0.25f, 0.3f, 0.25f));
 
         var turret = GameObject.CreatePrimitive(PrimitiveType.Cube);
         turret.transform.SetParent(transform, false);
@@ -37,9 +35,7 @@ public class IronDome : MonoBehaviour
         turret.transform.localPosition = new Vector3(0, 1.9f, 0);
         turret.transform.localRotation = Quaternion.Euler(-25, 0, 0);
         Destroy(turret.GetComponent<Collider>());
-        var turretMat = new Material(Shader.Find("Standard"));
-        turretMat.color = new Color(0.5f, 0.55f, 0.5f);
-        turret.GetComponent<MeshRenderer>().material = turretMat;
+        turret.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(new Color(0.5f, 0.55f, 0.5f));
     }
 
     void Update()

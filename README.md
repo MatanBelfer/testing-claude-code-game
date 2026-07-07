@@ -25,15 +25,16 @@ scene file.
 they can be fixed** — a C# compile error is easy to diagnose and fix from the error text
 alone, even without the ability to run the Editor directly.
 
-Recommended Editor version: **Unity 2022.3 LTS** (any 2022.3.x patch will prompt to
-"open with this Editor" — that's fine). Built-in Render Pipeline (no URP/HDRP needed).
+Works on **Unity 2022.3 LTS through Unity 6 (6000.x)**. Built-in Render Pipeline out of
+the box; URP/HDRP also supported (materials are created at runtime via `VisualUtil.cs`,
+which detects the active pipeline).
 
 ## How to open it
 
-1. Install Unity Hub + Unity 2022.3 LTS.
-2. In Unity Hub, "Add" this repository folder as a project, then open it.
-3. Open `Assets/Scenes/Main.unity` if it doesn't open automatically.
-4. Press Play.
+See **[SETUP.md](SETUP.md)** for full setup steps, including the Unity 6 upgrade notes
+(Active Input Handling, URP migration), mobile build steps, and troubleshooting.
+Short version: add the repo folder in Unity Hub, open with Unity 6 and accept the
+upgrade, open `Assets/Scenes/Main.unity`, press Play.
 
 ## Controls
 
@@ -85,6 +86,7 @@ Assets/
     City.cs                - building visuals, damage feedback
     HUDController.cs       - runtime-built UGUI HUD (score, hits, game over/restart)
     ExplosionFX.cs         - simple scale/fade explosion effect
+    VisualUtil.cs          - pipeline-aware material creation (Built-in/URP/HDRP)
 ```
 
 ## Deploying to PC / mobile

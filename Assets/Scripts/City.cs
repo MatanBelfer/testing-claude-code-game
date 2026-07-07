@@ -29,9 +29,7 @@ public class City : MonoBehaviour
             b.transform.localPosition = new Vector3(offsetX, h / 2f, offsetZ);
             Destroy(b.GetComponent<Collider>());
 
-            var mat = new Material(Shader.Find("Standard"));
-            mat.color = baseColor;
-            b.GetComponent<MeshRenderer>().material = mat;
+            b.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(baseColor);
             rends.Add(b.GetComponent<Renderer>());
         }
         buildingRenderers = rends.ToArray();

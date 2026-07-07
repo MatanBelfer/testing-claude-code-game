@@ -19,15 +19,13 @@ public class Interceptor : MonoBehaviour
         body.transform.SetParent(transform, false);
         body.transform.localScale = new Vector3(0.35f, 0.9f, 0.35f);
         Destroy(body.GetComponent<Collider>());
-        var mat = new Material(Shader.Find("Standard"));
-        mat.color = new Color(0.85f, 0.9f, 0.95f);
-        body.GetComponent<MeshRenderer>().material = mat;
+        body.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(new Color(0.85f, 0.9f, 0.95f));
 
         var trail = gameObject.AddComponent<TrailRenderer>();
         trail.time = 0.8f;
         trail.startWidth = 0.25f;
         trail.endWidth = 0.02f;
-        trail.material = new Material(Shader.Find("Sprites/Default"));
+        trail.material = VisualUtil.NewUnlitTransparentMaterial(Color.white);
         trail.startColor = new Color(1f, 1f, 1f, 0.9f);
         trail.endColor = new Color(0.6f, 0.6f, 0.6f, 0f);
     }

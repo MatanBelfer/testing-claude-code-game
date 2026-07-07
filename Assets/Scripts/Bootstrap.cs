@@ -38,9 +38,7 @@ public class Bootstrap : MonoBehaviour
         ground.transform.localScale = new Vector3(
             GameConfig.MapHalfWidth * 2f / 10f, 1f, GameConfig.MapHalfDepth * 2f / 10f);
 
-        var mat = new Material(Shader.Find("Standard"));
-        mat.color = new Color(0.65f, 0.6f, 0.45f);
-        ground.GetComponent<MeshRenderer>().material = mat;
+        ground.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(new Color(0.65f, 0.6f, 0.45f));
     }
 
     void BuildLighting()
