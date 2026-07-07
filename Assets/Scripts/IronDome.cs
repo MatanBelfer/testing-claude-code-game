@@ -36,6 +36,28 @@ public class IronDome : MonoBehaviour
         turret.transform.localRotation = Quaternion.Euler(-25, 0, 0);
         Destroy(turret.GetComponent<Collider>());
         turret.GetComponent<MeshRenderer>().material = VisualUtil.NewLitMaterial(new Color(0.5f, 0.55f, 0.5f));
+
+        if (GameConfig.ShowRangeDomes)
+            BuildRangeDome();
+    }
+
+    // Translucent shell marking how far a path can be drawn from this dome.
+    // A sphere centered on the ground reads as a hemisphere; it's squashed
+    // vertically since the interceptor flies low relative to its reach.
+    void BuildRangeDome()
+    {
+        var shell = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        shell.name = "RangeDome";
+        shell.transform.SetParent(transform, false);
+        shell.transform.localPosition = Vector3.zero;
+        float r = GameConfig.DomeRange;
+        shell.transform.localScale = new Vector3(r * 2f, r, r * 2f);
+        Destroy(shell.GetComponent<Collider>());
+
+        var renderer = shell.GetComponent<MeshRenderer>();
+        renderer.material = VisualUtil.NewUnlitTransparentMaterial(new Color(0.35f, 0.7f, 1f, 0.07f));
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
     }
 
     void Update()

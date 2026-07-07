@@ -19,6 +19,8 @@ public class InputRouter : MonoBehaviour
 
     bool pinching;
     float lastPinchDistance;
+    Vector2 lastPinchCenter;
+    Vector2 lastRightDragPos;
 
     void Awake()
     {
@@ -115,6 +117,14 @@ public class InputRouter : MonoBehaviour
             if (RaycastGround(screenPos, out Vector3 point))
             {
                 point.y = 0f;
+
+                // Keep the path inside the dome's reach: points past the
+                // range circle are pulled back onto its edge.
+                Vector3 fromDome = point - activeDome.transform.position;
+                fromDome.y = 0f;
+                if (fromDome.magnitude > GameConfig.DomeRange)
+                    point = activeDome.transform.position + fromDome.normalized * GameConfig.DomeRange;
+
                 if (Vector3.Distance(point, currentPath[currentPath.Count - 1]) >= GameConfig.MinPathPointDistance)
                 {
                     currentPath.Add(point);
@@ -151,6 +161,19 @@ public class InputRouter : MonoBehaviour
         if (mouse.leftButton.wasPressedThisFrame) BeginDrag(pos);
         else if (mouse.leftButton.isPressed && mode != Mode.Idle) UpdateDrag(pos);
         else if (mouse.leftButton.wasReleasedThisFrame) EndDrag();
+
+        // Right-drag orbits freely: horizontal rotates, vertical tilts.
+        if (mouse.rightButton.wasPressedThisFrame)
+        {
+            lastRightDragPos = pos;
+        }
+        else if (mouse.rightButton.isPressed && mode != Mode.Drawing)
+        {
+            Vector2 delta = pos - lastRightDragPos;
+            rig.Rotate(-delta.x * GameConfig.DragRotateSpeed);
+            rig.Tilt(delta.y * GameConfig.DragTiltSpeed);
+            lastRightDragPos = pos;
+        }
     }
 
     void HandleTouch()
@@ -181,17 +204,21 @@ public class InputRouter : MonoBehaviour
             if (mode == Mode.Drawing) activeDome.ClearPreview();
             mode = Mode.Idle;
 
+            // Two fingers: spread to zoom, move both up/down to tilt.
             float distance = Vector2.Distance(touches[0].screenPosition, touches[1].screenPosition);
+            Vector2 center = (touches[0].screenPosition + touches[1].screenPosition) * 0.5f;
             if (!pinching)
             {
                 pinching = true;
                 lastPinchDistance = distance;
+                lastPinchCenter = center;
             }
             else
             {
-                float delta = distance - lastPinchDistance;
-                rig.Zoom(delta * GameConfig.PinchZoomSpeed);
+                rig.Zoom((distance - lastPinchDistance) * GameConfig.PinchZoomSpeed);
+                rig.Tilt((center.y - lastPinchCenter.y) * GameConfig.DragTiltSpeed);
                 lastPinchDistance = distance;
+                lastPinchCenter = center;
             }
         }
         else

@@ -25,6 +25,10 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] float interceptHitRadius = 3.5f;
     [Tooltip("Max height difference still counted as a hit (proximity fuse).")]
     [SerializeField] float verticalInterceptTolerance = 6f;
+    [Tooltip("Max horizontal distance a path can be drawn from its dome.")]
+    [SerializeField] float domeRange = 28f;
+    [Tooltip("Show a translucent dome over each battery marking its reach.")]
+    [SerializeField] bool showRangeDomes = true;
 
     [Header("Difficulty")]
     [Tooltip("Total city hits before game over.")]
@@ -38,10 +42,20 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] float scrollZoomStep = 2f;
     [Tooltip("Zoom change per pixel of pinch distance change.")]
     [SerializeField] float pinchZoomSpeed = 0.05f;
-    [Tooltip("Orbit speed in degrees/second for Q/E and arrow keys.")]
+    [Tooltip("Orbit speed in degrees/second for Q/E, A/D and left/right arrows.")]
     [SerializeField] float keyboardRotateSpeed = 90f;
     [Tooltip("Orbit degrees per screen pixel when dragging on empty ground.")]
     [SerializeField] float dragRotateSpeed = 0.25f;
+    [Tooltip("Tilt speed in degrees/second for W/S and up/down arrows.")]
+    [SerializeField] float keyboardTiltSpeed = 60f;
+    [Tooltip("Tilt degrees per screen pixel (right-mouse drag / two-finger drag).")]
+    [SerializeField] float dragTiltSpeed = 0.2f;
+    [Tooltip("Camera pitch at startup. 35.264 is the classic isometric angle.")]
+    [SerializeField] float defaultPitch = 35.264f;
+    [Tooltip("Shallowest camera pitch (low, near-horizon view).")]
+    [SerializeField] float minPitch = 20f;
+    [Tooltip("Steepest camera pitch (near top-down view).")]
+    [SerializeField] float maxPitch = 85f;
 
     void Awake()
     {
@@ -86,6 +100,8 @@ public class Bootstrap : MonoBehaviour
         GameConfig.DomeFireCooldown = domeFireCooldown;
         GameConfig.InterceptHitRadius = interceptHitRadius;
         GameConfig.VerticalInterceptTolerance = verticalInterceptTolerance;
+        GameConfig.DomeRange = domeRange;
+        GameConfig.ShowRangeDomes = showRangeDomes;
 
         GameConfig.MaxCityHits = maxCityHits;
 
@@ -96,6 +112,11 @@ public class Bootstrap : MonoBehaviour
         GameConfig.PinchZoomSpeed = pinchZoomSpeed;
         GameConfig.KeyboardRotateSpeed = keyboardRotateSpeed;
         GameConfig.DragRotateSpeed = dragRotateSpeed;
+        GameConfig.KeyboardTiltSpeed = keyboardTiltSpeed;
+        GameConfig.DragTiltSpeed = dragTiltSpeed;
+        GameConfig.DefaultPitch = defaultPitch;
+        GameConfig.MinPitch = minPitch;
+        GameConfig.MaxPitch = maxPitch;
     }
 
     void BuildGround()
@@ -120,18 +141,14 @@ public class Bootstrap : MonoBehaviour
         if (mainCam == null) return;
 
         // The rig sits at the map center and only ever yaws; the camera hangs
-        // off it at a fixed isometric pitch, so the map stays put and the
-        // camera orbits around it.
+        // off it at an adjustable pitch, so the map stays put and the camera
+        // orbits around it. CameraRig.Apply() positions the camera from
+        // yaw/pitch once the component is added.
         var rigGo = new GameObject("CameraRig");
         rigGo.transform.position = Vector3.zero;
 
-        Transform camTransform = mainCam.transform;
-        camTransform.SetParent(rigGo.transform, false);
-        Quaternion pitch = Quaternion.Euler(35.264f, 0f, 0f);
-        camTransform.localRotation = pitch;
-        camTransform.localPosition = -(pitch * Vector3.forward) * 80f;
+        mainCam.transform.SetParent(rigGo.transform, false);
         mainCam.orthographic = true;
-        mainCam.orthographicSize = GameConfig.DefaultZoom;
         mainCam.nearClipPlane = 1f;
         mainCam.farClipPlane = 300f;
 

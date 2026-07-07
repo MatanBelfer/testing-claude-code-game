@@ -39,6 +39,8 @@ public static class GameConfig
     public static float DomeFireCooldown = 1.25f;
     public static float InterceptHitRadius = 3.5f;
     public static float VerticalInterceptTolerance = 6f;
+    public static float DomeRange = 28f;
+    public static bool ShowRangeDomes = true;
 
     // --- Difficulty (overwritten by Bootstrap Inspector values) ---
     public static int MaxCityHits = 10;
@@ -49,8 +51,13 @@ public static class GameConfig
     public static float DefaultZoom = 26f;
     public static float ScrollZoomStep = 2f;
     public static float PinchZoomSpeed = 0.05f;
-    public static float KeyboardRotateSpeed = 90f;   // degrees per second (Q/E, arrows)
+    public static float KeyboardRotateSpeed = 90f;   // degrees per second (Q/E, A/D, left/right)
     public static float DragRotateSpeed = 0.25f;     // degrees per screen pixel dragged
+    public static float KeyboardTiltSpeed = 60f;     // degrees per second (W/S, up/down)
+    public static float DragTiltSpeed = 0.2f;        // degrees per screen pixel dragged
+    public static float DefaultPitch = 35.264f;      // classic isometric angle
+    public static float MinPitch = 20f;              // shallow, near-horizon view
+    public static float MaxPitch = 85f;              // near top-down view
 
     // --- Input feel ---
     public const float DomePickRadius = 4f;

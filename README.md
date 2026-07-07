@@ -45,13 +45,15 @@ come in from any direction.
 - Click-drag starting *on* an Iron Dome battery: draws the interceptor's flight path
   on the ground. Release to fire.
 - Click-drag starting on empty ground: rotates the camera around the map.
+- Right-click drag: rotate (horizontal) and tilt (vertical) freely.
 - Mouse scroll wheel: zoom in/out.
-- Q/E, A/D or left/right arrows: rotate the camera.
+- Q/E, A/D or left/right arrows: rotate. W/S or up/down arrows: tilt
+  (from a low angle up to a near top-down view).
 
 **Mobile (touch)**
 - One-finger drag starting on a dome: draws the interceptor's flight path.
 - One-finger drag on empty ground: rotates the camera around the map.
-- Two-finger pinch: zoom in/out.
+- Two-finger pinch: zoom. Move both fingers up/down together: tilt.
 
 ## Gameplay
 
@@ -61,6 +63,8 @@ come in from any direction.
 - Draw a path on the ground from any Iron Dome battery; the interceptor flies that
   path at engage altitude at a constant speed — timing and shaping the curve to meet
   the missile is the core skill (same principle as *Flight Control*'s path drawing).
+- Each battery has a limited reach, shown as a translucent dome; paths can't be drawn
+  past its edge, so coverage gaps between batteries are part of the strategy.
 - All gameplay tuning (spawn rate, missile speed, intercept radius, camera) is exposed
   in the Inspector on the **Bootstrap** object in the Main scene.
 - Each dome can fire again after a short cooldown (no ammo limit).
